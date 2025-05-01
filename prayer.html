@@ -1,42 +1,396 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prayer Times | Mosque</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mosque Prayer Times & Events</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Amiri', serif;
+            background: #f0f4f8;
+            color: #333;
+            padding-top: 80px;
+            overflow-x: hidden;
+        }
+
+        /* Preloader */
+        #preloader {
+            background: #fff url('https://i.gifer.com/YCZH.gif') no-repeat center center;
+            background-size: 70px 70px;
+            height: 100vh;
+            width: 100%;
+            position: fixed;
+            z-index: 9999;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 100, 0, 0.8);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Navigation */
+        .nav-links {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            transition: all 0.5s ease;
+        }
+
+        .nav-links li {
+            margin-left: 25px;
+            position: relative;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background 0.4s, color 0.4s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: #ffd700;
+            color: #003300;
+        }
+
+        .nav-links li::after {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 0;
+            background: #ffd700;
+            transition: width 0.4s;
+            margin-top: 5px;
+        }
+
+        .nav-links li:hover::after {
+            width: 100%;
+        }
+
+        /* Hamburger Menu */
+        .menu-toggle {
+            display: none;
+            font-size: 30px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 92vh;
+            background: linear-gradient(rgba(0, 100, 0, 0.7), rgba(0, 100, 0, 0.7)),
+                url('https://images.unsplash.com/photo-1579546928686-286c9fbde5ec') no-repeat center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero-content {
+            color: #fff;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .hero-content h1 {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .hero-content p {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: #ffd700;
+            color: #003300;
+            padding: 14px 36px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 30px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #e6c200;
+        }
+
+        /* Page Section */
+        .page-section {
+            padding: 100px 20px 50px 20px;
+            text-align: center;
+        }
+
+        .page-section h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        /* Prayer Times Table */
+        .prayer-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 40px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .prayer-table th,
+        .prayer-table td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .prayer-table th {
+            background-color: #006400;
+            color: #fff;
+        }
+
+        .prayer-table td {
+            background-color: #f9f9f9;
+        }
+
+        .prayer-table tr:nth-child(even) td {
+            background-color: #e0f7fa;
+        }
+
+        /* Footer */
+        .footer {
+            background: #003300;
+            color: #fff;
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 16px;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                background: rgba(0, 51, 0, 0.95);
+                position: fixed;
+                right: 0;
+                top: 0;
+                height: 100vh;
+                width: 250px;
+                transform: translateX(100%);
+                transition: transform 0.4s ease;
+                padding-top: 100px;
+            }
+
+            .nav-links.active {
+                transform: translateX(0);
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links li {
+                margin: 20px 0;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<div id="preloader"></div>
+    <!-- Preloader -->
+    <div id="preloader"></div>
 
-<header class="header">
-  <div class="nav-container">
-    <div class="logo">Mosque 🕌</div>
-    <nav>
-      <ul class="nav-links" id="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="event.html">Events</a></li>
-        <li><a class="active" href="donations.html">Donations</a></li>
-        <li><a href="prayer.html">Prayer Times</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-    </nav>
-    <div class="menu-toggle" id="menu-toggle">&#9776;</div>
-  </div>
-</header>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">Mosque 🕌</div>
+            <nav>
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a class="active" href="event.html">Events</a></li>
+                    <li><a href="donations.html">Donations</a></li>
+                    <li><a href="prayer.html">Prayer Times</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle" id="menu-toggle">&#9776;</div>
+        </div>
+    </header>
 
-<section class="page-section">
-  <h1>Daily Prayer Times</h1>
-  <p>Stay updated with our daily prayer schedules. 🕋</p>
-</section>
+    <!-- Prayer Times Section -->
+    <section class="page-section">
+        <h1>Prayer Times</h1>
 
-<footer class="footer">
-  <p>&copy; 2025 Mosque | Designed with ❤️</p>
-</footer>
+        <!-- Prayer Times Table -->
+        <table class="prayer-table" id="prayer-table">
+            <thead>
+                <tr>
+                    <th>Prayer</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody id="prayer-times">
+                <!-- Prayer times will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </section>
 
-<script src="script.js"></script>
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Mosque Community. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Prayer times data for each day of the week
+        const prayerTimes = {
+            "Monday": {
+                "Fajr": "5:00 AM",
+                "Dhuhr": "12:30 PM",
+                "Asr": "3:45 PM",
+                "Maghrib": "6:30 PM",
+                "Isha": "8:00 PM",
+                "Jumma": "1:15 PM"
+            },
+            "Tuesday": {
+                "Fajr": "5:10 AM",
+                "Dhuhr": "12:30 PM",
+                "Asr": "3:50 PM",
+                "Maghrib": "6:35 PM",
+                "Isha": "8:05 PM",
+                "Jumma": "1:15 PM"
+            },
+            "Wednesday": {
+                "Fajr": "5:20 AM",
+                "Dhuhr": "12:30 PM",
+                "Asr": "3:55 PM",
+                "Maghrib": "6:40 PM",
+                "Isha": "8:10 PM",
+                "Jumma": "1:15 PM"
+            },
+            "Thursday": {
+                "Fajr": "5:00 AM",
+                "Dhuhr": "12:30 PM",
+                "Asr": "3:45 PM",
+                "Maghrib": "6:30 PM",
+                "Isha": "8:00 PM",
+                "Jumma": "1:15 PM"
+            },
+            "Friday": {
+                "Fajr": "5:05 AM",
+                "Dhuhr": "12:35 PM",
+                "Asr": "3:55 PM",
+                "Maghrib": "6:40 PM",
+                "Isha": "8:15 PM",
+                "Jumma": "1:00 PM"
+            },
+            "Saturday": {
+                "Fajr": "5:10 AM",
+                "Dhuhr": "12:30 PM",
+                "Asr": "3:50 PM",
+                "Maghrib": "6:35 PM",
+                "Isha": "8:05 PM",
+                "Jumma": "1:15 PM"
+            },
+            "Sunday": {
+                "Fajr": "5:20 AM",
+                "Dhuhr": "12:30 PM",
+                "Asr": "3:55 PM",
+                "Maghrib": "6:40 PM",
+                "Isha": "8:10 PM",
+                "Jumma": "1:15 PM"
+            }
+        };
+
+        // Function to update the prayer times for the current day
+        function updatePrayerTimes() {
+            const today = new Date().toLocaleString('en-us', { weekday: 'long' });
+            const times = prayerTimes[today];
+
+            const prayerTable = document.getElementById('prayer-times');
+            prayerTable.innerHTML = "";
+
+            for (let prayer in times) {
+                const row = document.createElement('tr');
+                const prayerCell = document.createElement('td');
+                const timeCell = document.createElement('td');
+
+                prayerCell.textContent = prayer;
+                timeCell.textContent = times[prayer];
+
+                row.appendChild(prayerCell);
+                row.appendChild(timeCell);
+                prayerTable.appendChild(row);
+            }
+        }
+
+        // Call the function to update prayer times on page load
+        window.onload = updatePrayerTimes;
+
+        // Preloader hide after 2 seconds
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('preloader').style.display = 'none';
+            }, 2000);
+        });
+
+        // Hamburger Menu
+        const menuToggle = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    </script>
 
 </body>
+
 </html>
