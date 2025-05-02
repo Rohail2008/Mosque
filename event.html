@@ -1,14 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Events Calendar | Mosque</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mosque Events Calendar</title>
+  <style>
+    /* Preloader */
+    #preloader {
+      background: #fff url('https://i.gifer.com/YCZH.gif') no-repeat center center;
+      background-size: 70px 70px;
+      height: 100vh;
+      width: 100%;
+      position: fixed;
+      z-index: 9999;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f9f4;
+      color: #003300;
+    }
+
+           .header {
+            background: rgba(0, 100, 0, 0.8);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Navigation */
+        .nav-links {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            transition: all 0.5s ease;
+        }
+
+        .nav-links li {
+            margin-left: 25px;
+            position: relative;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background 0.4s, color 0.4s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: #ffd700;
+            color: #003300;
+        }
+
+        .nav-links li::after {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 0;
+            background: #ffd700;
+            transition: width 0.4s;
+            margin-top: 5px;
+        }
+
+        .nav-links li:hover::after {
+            width: 100%;
+        }
+
+        /* Hamburger Menu */
+        .menu-toggle {
+            display: none;
+            font-size: 30px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+    /* Page Section */
+    .page-section {
+      padding: 120px 20px 40px;
+      text-align: center;
+    }
+
+    .btn {
+      background: #006400;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #228b22;
+    }
+
+    /* Calendar */
+    .calendar {
+      max-width: 1000px;
+      margin: 2rem auto;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      background: #fff;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .day-name {
+      font-weight: bold;
+      background: #cde9c4;
+      text-align: center;
+      padding: 0.5rem 0;
+      border-radius: 6px;
+    }
+
+    .date {
+      padding: 1rem 0.5rem;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      background: #f1fff1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .date:hover {
+      background: #e1ffe1;
+    }
+
+    .today {
+      background: #ffd700;
+      color: #003300;
+      font-weight: bold;
+      border: 2px solid #006400;
+    }
+
+    .event {
+      margin-top: 5px;
+      background: #006400;
+      color: white;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      color: #aaa;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #006400;
+      color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        flex-direction: column;
+        display: none;
+        width: 100%;
+      }
+
+      .nav-links.show {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+    }
+  </style>
 </head>
 <body>
-
-<!-- Preloader -->
 <div id="preloader"></div>
 
 <!-- Header -->
@@ -33,23 +263,17 @@
 <section class="page-section">
   <h1 id="calendar-title">📅 Mosque Events</h1>
   <p>Plan your month with our community activities 🌙✨</p>
-
-  <div style="margin: 20px;">
-    <button class="btn" id="prev-month">⬅️ Previous</button>
-    <button class="btn" id="next-month">Next ➡️</button>
-  </div>
-
-  <div class="calendar" id="calendar">
-    <!-- Calendar will be generated here -->
-  </div>
+  <button class="btn" onclick="changeMonth(-1)">⬅️ Previous</button>
+  <button class="btn" onclick="changeMonth(1)">Next ➡️</button>
+  <div class="calendar" id="calendar"></div>
 </section>
 
-<!-- Event Detail Popup -->
-<div id="event-popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:2000;">
-  <div style="background:#fff; padding:20px; border-radius:10px; width:90%; max-width:400px; text-align:center; position:relative;">
-    <span id="close-popup" style="position:absolute; top:10px; right:15px; font-size:24px; cursor:pointer;">&times;</span>
-    <h2 id="popup-title"></h2>
-    <p id="popup-description"></p>
+<!-- Modal Popup -->
+<div class="modal" id="event-modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2 id="event-title"></h2>
+    <p id="event-date"></p>
   </div>
 </div>
 
@@ -58,8 +282,114 @@
   <p>&copy; 2025 Mosque | Designed with ❤️</p>
 </footer>
 
-<!-- Script -->
-<script src="script.js"></script>
+<!-- JavaScript -->
+<script>
+  const preloader = document.getElementById('preloader');
+  window.addEventListener('load', () => {
+    preloader.style.display = 'none';
+  });
+
+  const calendar = document.getElementById("calendar");
+  const today = new Date();
+  let currentMonth = today.getMonth();
+  let currentYear = today.getFullYear();
+
+  const events = {
+    "2025-05-10": "Qur'an Class",
+    "2025-05-15": "Friday Prayer",
+    "2025-05-27": "Eid Gathering"
+  };
+
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  function generateCalendar(year, month) {
+    calendar.innerHTML = "";
+    dayNames.forEach(day => {
+      const dayEl = document.createElement("div");
+      dayEl.className = "day-name";
+      dayEl.textContent = day;
+      calendar.appendChild(dayEl);
+    });
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) {
+      const emptyCell = document.createElement("div");
+      calendar.appendChild(emptyCell);
+    }
+
+    for (let day = 1; day <= totalDays; day++) {
+      const dateEl = document.createElement("div");
+      dateEl.className = "date";
+
+      const date = new Date(year, month, day);
+      if (
+        date.getFullYear() === today.getFullYear() &&
+        date.getMonth() === today.getMonth() &&
+        date.getDate() === today.getDate()
+      ) {
+        dateEl.classList.add("today");
+      }
+
+      const dateString = `${year}-${(month + 1).toString().padStart(2, '0')}-${day
+        .toString()
+        .padStart(2, '0')}`;
+
+      const number = document.createElement("div");
+      number.textContent = day;
+      dateEl.appendChild(number);
+
+      if (events[dateString]) {
+        const eventEl = document.createElement("div");
+        eventEl.className = "event";
+        eventEl.textContent = events[dateString];
+        eventEl.addEventListener("click", () => openModal(events[dateString], dateString));
+        dateEl.appendChild(eventEl);
+      }
+
+      calendar.appendChild(dateEl);
+    }
+
+    const monthName = new Date(year, month).toLocaleString('default', { month: 'long' });
+    document.getElementById("calendar-title").textContent = `📅 ${monthName} ${year} Mosque Events`;
+  }
+
+  function changeMonth(offset) {
+    currentMonth += offset;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear -= 1;
+    } else if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear += 1;
+    }
+    generateCalendar(currentYear, currentMonth);
+  }
+
+  function openModal(eventTitle, dateString) {
+    document.getElementById("event-title").textContent = eventTitle;
+    document.getElementById("event-date").textContent = `Date: ${dateString}`;
+    document.getElementById("event-modal").style.display = "block";
+  }
+
+  function closeModal() {
+    document.getElementById("event-modal").style.display = "none";
+  }
+
+  document.getElementById("menu-toggle").addEventListener("click", () => {
+    document.getElementById("nav-links").classList.toggle("show");
+  });
+
+  window.onclick = function(event) {
+    const modal = document.getElementById("event-modal");
+    if (event.target === modal) {
+      closeModal();
+    }
+  };
+
+  generateCalendar(currentYear, currentMonth);
+</script>
 
 </body>
 </html>
