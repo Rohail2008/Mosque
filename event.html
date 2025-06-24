@@ -1,30 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mosque Events Calendar</title>
   <style>
-    body { margin: 0; font-family: sans-serif; background: #f4f9f4; color: #003300; }
-    header, footer { background: #006400; color: white; padding: 1rem; text-align: center; }
-    .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; max-width: 1000px; margin: auto; background: #fff; padding: 1rem; border-radius: 10px; }
-    .day-name { font-weight: bold; text-align: center; background: #cde9c4; padding: 8px; border-radius: 5px; }
-    .date { background: #f1fff1; text-align: center; padding: 10px; border-radius: 6px; cursor: pointer; }
-    .date:hover { background: #e0ffe0; }
-    .today { background: #ffd700 !important; border: 2px solid #006400; }
-    .event { background: #006400; color: white; margin-top: 5px; font-size: 0.75rem; padding: 2px 6px; border-radius: 5px; }
-    .btn { background: #006400; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; margin: 5px; }
-    .btn:hover { background: #228b22; }
-    form, #search { max-width: 400px; margin: 20px auto; display: flex; flex-direction: column; gap: 10px; }
-    input, textarea { padding: 10px; border-radius: 5px; border: 1px solid #ccc; }
-    .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
-    .modal-content { background: white; margin: 10% auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; position: relative; text-align: center; }
-    .close { position: absolute; right: 10px; top: 10px; cursor: pointer; font-size: 24px; color: #888; }
-    .actions { margin-top: 10px; }
-    .actions button { margin: 3px; font-size: 0.8rem; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f9f4;
+      color: #003300;
+    }
+    header, footer {
+      background: #006400;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      max-width: 1000px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+    }
+    .day-name {
+      font-weight: bold;
+      text-align: center;
+      background: #cde9c4;
+      padding: 8px;
+      border-radius: 5px;
+    }
+    .date {
+      background: #f1fff1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      min-height: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .date:hover {
+      background: #e0ffe0;
+    }
+    .today {
+      background: #ffd700 !important;
+      border: 2px solid #006400;
+    }
+    .event {
+      background: #006400;
+      color: white;
+      margin-top: 5px;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 5px;
+      width: 90%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .btn {
+      background: #006400;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .btn:hover {
+      background: #228b22;
+    }
+    form#event-form {
+      max-width: 400px;
+      margin: 20px auto;
+      display: none; /* hidden by default, shown after admin login */
+      flex-direction: column;
+      gap: 10px;
+    }
+    form#event-form input,
+    form#event-form textarea {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #form-status {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 5px;
+      min-height: 20px;
+    }
+    #search {
+      max-width: 400px;
+      margin: 20px auto;
+      display: block;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      width: 90%;
+      box-sizing: border-box;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      overflow: auto;
+    }
+    .modal-content {
+      background: white;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+      text-align: center;
+    }
+    .close {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      cursor: pointer;
+      font-size: 24px;
+      color: #888;
+    }
     @media (max-width: 600px) {
-      .calendar { grid-template-columns: repeat(3, 1fr); }
-      .btn { width: 100%; }
+      .calendar {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .btn {
+        width: 90%;
+        margin: 10px auto;
+        display: block;
+      }
     }
   </style>
 </head>
@@ -44,14 +166,14 @@
 <div class="calendar" id="calendar"></div>
 
 <!-- Admin-only Add Event Form -->
-<form id="event-form" style="display:none;">
-  <input type="date" name="date" required>
-  <input type="text" name="title" placeholder="Event Title" required>
-  <input type="time" name="time" required>
+<form id="event-form">
+  <input type="date" name="date" required />
+  <input type="text" name="title" placeholder="Event Title" required />
+  <input type="time" name="time" required />
   <textarea name="description" placeholder="Event Description (optional)"></textarea>
   <button class="btn" type="submit">Add Event</button>
 </form>
-<p id="form-status" style="text-align:center;"></p>
+<p id="form-status"></p>
 
 <!-- Event Modal -->
 <div class="modal" id="event-modal">
@@ -61,149 +183,203 @@
     <p id="modal-date"></p>
     <p id="modal-time"></p>
     <p id="modal-description"></p>
-    <div class="actions" id="modal-actions"></div>
   </div>
 </div>
 
 <footer>
-  <p>© 2025 Masjid Al-Ali. Made with ❤️ by <a href="https://chrohail.org" style="color:yellow" target="_blank">Chaudhry Rashid</a></p>
+  <p>© 2025 Masjid Al-Ali. Made with ❤️ by <a href="https://chrohail.org" style="color:yellow" target="_blank" rel="noopener">Chaudhry Rashid</a></p>
 </footer>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzqVEMsWlJYImJtfR4QYOubHiCrpqcAx74QXTaYE5LJVymRBJg4YhcbHk0LHvcg1VzTXw/exec";
-let today = new Date(), currentMonth = today.getMonth(), currentYear = today.getFullYear();
-let events = [], admin = false;
+  const API_URL = "https://script.google.com/macros/s/AKfycbzqVEMsWlJYImJtfR4QYOubHiCrpqcAx74QXTaYE5LJVymRBJg4YhcbHk0LHvcg1VzTXw/exec";
+  let today = new Date();
+  let currentMonth = today.getMonth();
+  let currentYear = today.getFullYear();
+  let events = [];
+  let admin = false;
 
-function promptAdmin() {
-  const pwd = prompt("Enter admin password:");
-  if (pwd === "admin123") {
-    admin = true;
-    document.getElementById("event-form").style.display = "flex";
-  } else {
-    alert("Access denied.");
+  // Prompt for admin password to show event form
+  function promptAdmin() {
+    const pwd = prompt("Enter admin password:");
+    if (pwd === "admin123") {
+      admin = true;
+      document.getElementById("event-form").style.display = "flex";
+    } else {
+      alert("Access denied.");
+    }
   }
-}
 
-async function fetchEvents() {
-  try {
-    const res = await fetch(API_URL);
-    events = await res.json();
+  // Fetch events from Google Apps Script
+  async function fetchEvents() {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error("Failed to fetch events");
+      events = await res.json();
+      generateCalendar(currentYear, currentMonth);
+    } catch (e) {
+      console.error(e);
+      alert("Could not load events. Please check your internet connection.");
+    }
+  }
+
+  // Generate calendar grid with events
+  function generateCalendar(year, month) {
+    const calendar = document.getElementById("calendar");
+    calendar.innerHTML = "";
+
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    dayNames.forEach(d => {
+      const el = document.createElement("div");
+      el.className = "day-name";
+      el.textContent = d;
+      calendar.appendChild(el);
+    });
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+
+    // empty slots before first day
+    for (let i = 0; i < firstDay; i++) {
+      calendar.appendChild(document.createElement("div"));
+    }
+
+    for (let day = 1; day <= totalDays; day++) {
+      const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      const dateEl = document.createElement("div");
+      dateEl.className = "date";
+      if (
+        year === today.getFullYear() &&
+        month === today.getMonth() &&
+        day === today.getDate()
+      ) {
+        dateEl.classList.add("today");
+      }
+
+      dateEl.innerHTML = `<div>${day}</div>`;
+
+      // add events for this date
+      events.filter(ev => ev.date === dateStr).forEach(ev => {
+        const evEl = document.createElement("div");
+        evEl.className = "event";
+        evEl.textContent = ev.title;
+        evEl.onclick = () => openModal(ev);
+        dateEl.appendChild(evEl);
+      });
+
+      calendar.appendChild(dateEl);
+    }
+  }
+
+  function changeMonth(offset) {
+    currentMonth += offset;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    } else if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
     generateCalendar(currentYear, currentMonth);
-  } catch (e) {
-    console.error("Error loading events", e);
   }
-}
 
-function generateCalendar(year, month) {
-  const calendar = document.getElementById("calendar");
-  calendar.innerHTML = "";
-  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  dayNames.forEach(d => {
-    const el = document.createElement("div");
-    el.className = "day-name";
-    el.textContent = d;
-    calendar.appendChild(el);
+  document.getElementById("event-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+
+    // prepare URLSearchParams because Google Apps Script expects form-urlencoded POST
+    const formData = new URLSearchParams();
+    formData.append("date", form.date.value);
+    formData.append("title", form.title.value);
+    formData.append("time", form.time.value);
+    formData.append("description", form.description.value);
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        body: formData,
+      });
+      if (res.ok) {
+        document.getElementById("form-status").textContent = "✅ Event added successfully!";
+        form.reset();
+        fetchEvents();
+      } else {
+        document.getElementById("form-status").textContent = "❌ Failed to add event.";
+      }
+    } catch (error) {
+      document.getElementById("form-status").textContent = "❌ Error adding event.";
+      console.error(error);
+    }
   });
 
-  const firstDay = new Date(year, month, 1).getDay();
-  const totalDays = new Date(year, month + 1, 0).getDate();
+  function openModal(ev) {
+    document.getElementById("modal-title").textContent = ev.title;
+    document.getElementById("modal-date").textContent = `📅 ${ev.date}`;
+    document.getElementById("modal-time").textContent = `🕒 ${ev.time}`;
+    document.getElementById("modal-description").textContent = ev.description || "";
+    document.getElementById("event-modal").style.display = "block";
+  }
 
-  for (let i = 0; i < firstDay; i++) calendar.appendChild(document.createElement("div"));
+  function closeModal() {
+    document.getElementById("event-modal").style.display = "none";
+  }
 
-  for (let day = 1; day <= totalDays; day++) {
-    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    const el = document.createElement("div");
-    el.className = "date";
-    if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) el.classList.add("today");
+  function filterEvents() {
+    const q = document.getElementById("search").value.toLowerCase();
+    const filteredEvents = events.filter(ev =>
+      ev.title.toLowerCase().includes(q) ||
+      ev.date.includes(q) ||
+      (ev.description && ev.description.toLowerCase().includes(q))
+    );
 
-    el.innerHTML = `<div>${day}</div>`;
-    events.filter(ev => ev.date === dateStr).forEach(ev => {
-      const evEl = document.createElement("div");
-      evEl.className = "event";
-      evEl.textContent = ev.title;
-      evEl.onclick = () => openModal(ev);
-      el.appendChild(evEl);
+    // Show filtered events in calendar by regenerating calendar but only showing dates with matching events
+    const calendar = document.getElementById("calendar");
+    calendar.innerHTML = "";
+
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    dayNames.forEach(d => {
+      const el = document.createElement("div");
+      el.className = "day-name";
+      el.textContent = d;
+      calendar.appendChild(el);
     });
-    calendar.appendChild(el);
-  }
-}
 
-function changeMonth(offset) {
-  currentMonth += offset;
-  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-  else if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-  generateCalendar(currentYear, currentMonth);
-}
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-document.getElementById("event-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const form = new FormData(e.target);
-  const data = Object.fromEntries(form.entries());
-  const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(data) });
-  if (res.ok) {
-    document.getElementById("form-status").textContent = "✅ Event added!";
-    e.target.reset();
-    fetchEvents();
-  } else {
-    document.getElementById("form-status").textContent = "❌ Failed to add.";
-  }
-});
+    for (let i = 0; i < firstDay; i++) {
+      calendar.appendChild(document.createElement("div"));
+    }
 
-function openModal(ev) {
-  document.getElementById("modal-title").textContent = ev.title;
-  document.getElementById("modal-date").textContent = `📅 ${ev.date}`;
-  document.getElementById("modal-time").textContent = `🕒 ${ev.time}`;
-  document.getElementById("modal-description").textContent = ev.description || "";
-  const actions = document.getElementById("modal-actions");
-  actions.innerHTML = "";
+    for (let day = 1; day <= totalDays; day++) {
+      const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      const dateEl = document.createElement("div");
+      dateEl.className = "date";
+      if (
+        currentYear === today.getFullYear() &&
+        currentMonth === today.getMonth() &&
+        day === today.getDate()
+      ) {
+        dateEl.classList.add("today");
+      }
 
-  if (admin) {
-    const delBtn = document.createElement("button");
-    delBtn.className = "btn";
-    delBtn.textContent = "🗑️ Delete";
-    delBtn.onclick = async () => {
-      await fetch(API_URL + "?delete=1", {
-        method: "POST",
-        body: JSON.stringify(ev)
+      dateEl.innerHTML = `<div>${day}</div>`;
+
+      filteredEvents.filter(ev => ev.date === dateStr).forEach(ev => {
+        const evEl = document.createElement("div");
+        evEl.className = "event";
+        evEl.textContent = ev.title;
+        evEl.onclick = () => openModal(ev);
+        dateEl.appendChild(evEl);
       });
-      closeModal();
-      fetchEvents();
-    };
-    actions.appendChild(delBtn);
+
+      calendar.appendChild(dateEl);
+    }
   }
 
-  document.getElementById("event-modal").style.display = "block";
-}
-
-function closeModal() {
-  document.getElementById("event-modal").style.display = "none";
-}
-
-function filterEvents() {
-  const q = document.getElementById("search").value.toLowerCase();
-  const filtered = events.filter(ev =>
-    ev.title.toLowerCase().includes(q) ||
-    ev.date.includes(q) ||
-    (ev.description && ev.description.toLowerCase().includes(q))
-  );
-  generateFilteredCalendar(filtered);
-}
-
-function generateFilteredCalendar(filteredEvents) {
-  const calendar = document.getElementById("calendar");
-  calendar.innerHTML = "";
-  const dates = [...new Set(filteredEvents.map(e => e.date))];
-  if (dates.length === 0) {
-    calendar.innerHTML = "<p style='grid-column: span 7; text-align:center;'>No matching events.</p>";
-    return;
-  }
-  generateCalendar(currentYear, currentMonth);
-}
-
-window.onload = () => {
-  fetchEvents();
-  setTimeout(promptAdmin, 500);
-};
+  window.onload = () => {
+    promptAdmin();
+    fetchEvents();
+  };
 </script>
 </body>
 </html>
